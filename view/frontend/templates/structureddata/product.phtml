@@ -1,0 +1,91 @@
+<?php
+$helper = $this->helper('Magento\Catalog\Helper\Output');
+/**
+ * Skip if not available for sale
+ */
+//if ($block->isAvailable() === false) {
+//    return '';
+//}
+
+$logoUrl = $block->getLogoUrl();
+$imageBaseUrl = $this->helper('Magento\Cms\Helper\Wysiwyg\Images')->getBaseUrl() . 'catalog/product/';
+
+$product = $block->getProduct();
+$description = $helper->productAttribute($product, $product->getDescription(), 'description');
+
+if (!empty($description) && 10 > strlen($description)) {
+    $description = $helper->productAttribute($product, $product->getShortDescription(), 'short_description');
+}
+
+if (!empty($description) && 10 > strlen($description)) {
+    $description = $product->getName();
+}
+
+if ($product->getMetaDescription() && !empty($product->getMetaDescription())) {
+    $description = $product->getMetaDescription();
+}
+
+$name = $product->getName();
+
+$productImages = $this->getProductImages($product);
+
+$categoryName = $this->getProductCategory($product);
+
+$priceValidUntil = $this->getProductPriceValid($product);
+?>
+{
+"@context":"https://schema.org",
+"@type":"Product",
+"name":"<?php echo $block->cleanString($name) ?>",
+"image":<?php echo json_encode($productImages) ?>,
+"description":"<?php echo $block->cleanString($description) ?>",
+"sku":"<?php echo $product->getSku(); ?>",
+"brand":{"@type":"Brand","name":"<?php echo $categoryName; ?>"},
+"offers":{
+"@type":"Offer",
+"url":"<?php echo $product->getProductUrl(); ?>",
+"sku":"<?php echo $product->getSku(); ?>",
+"priceCurrency":"UAH",
+"price":<?php echo $this->getStartingPrice($product); ?>,
+"priceValidUntil":"<?php echo $priceValidUntil; ?>",
+"itemCondition":"https://schema.org/NewCondition",
+"availability":"<?php if ($product->isAvailable()): ?>https://schema.org/InStock<?php else: ?>https://schema.org/OutOfStock<?php endif; ?>",
+"hasMerchantReturnPolicy": {
+"@type": "MerchantReturnPolicy",
+"applicableCountry": ["UA"],
+"returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+"merchantReturnDays": 14,
+"returnMethod": "https://schema.org/ReturnByMail",
+"returnFees":"https://schema.org/ReturnShippingFees"
+},
+"shippingDetails": {"@type": "OfferShippingDetails",
+"deliveryTime": {
+"@type": "ShippingDeliveryTime",
+"businessDays": {
+"@type": "OpeningHoursSpecification",
+"dayOfWeek": [
+"https://schema.org/Monday",
+"https://schema.org/Tuesday",
+"https://schema.org/Wednesday",
+"https://schema.org/Thursday",
+"https://schema.org/Friday"
+]
+},
+"cutoffTime": "12:00:15Z",
+"handlingTime": {
+"@type": "QuantitativeValue",
+"minValue": 1,
+"maxValue": 2,
+"unitCode": "d"
+},
+"transitTime": {
+"@type": "QuantitativeValue",
+"minValue": 1,
+"maxValue": 3,
+"unitCode": "d"
+}
+},
+"shippingRate": {"@type": "MonetaryAmount","value": "0","currency": "UAH"},"shippingDestination": [{"@type": "DefinedRegion","addressCountry": ["UA"]}]
+}
+}
+}

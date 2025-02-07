@@ -1,0 +1,14 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <attribute name="itemtype" value=""/>
+        <attribute name="itemscope" value=""/>
+        <referenceContainer name="after.body.start">
+            <block class="Magento\Framework\View\Element\Template" name="jsonld.product"
+                   template="Dragonfly_JsonLd::structureddata/js.phtml" before="-">
+                <block class="Dragonfly\JsonLd\Block\StructuredData\Product"
+                       name="jsonld.sd.product"
+                       template="Dragonfly_JsonLd::structureddata/product.phtml" />
+            </block>
+        </referenceContainer>
+    </body>
+</page>

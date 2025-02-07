@@ -1,0 +1,7 @@
+
+<?php $content = $block->getChildHtml(); ?>
+<?php if (trim($content) != ''): ?>
+<script type="application/ld+json">
+    <?= $content ?>
+</script>
+<?php endif; ?>
